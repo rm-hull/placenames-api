@@ -1,0 +1,6 @@
+services:
+  init_db:
+    build: ./init
+    container_name: init-db
+    volumes:
+      - ./data:/data

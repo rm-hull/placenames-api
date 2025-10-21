@@ -1,1 +1,1 @@
-# placenames-api
+# place-names
