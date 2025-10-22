@@ -4,6 +4,7 @@ import (
 	"compress/gzip"
 	"encoding/csv"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -46,24 +47,29 @@ func loadData(filename string) (*internal.Trie, error) {
 	}()
 
 	csvReader := csv.NewReader(gzReader)
-	records, err := csvReader.ReadAll()
-	if err != nil {
-		return nil, fmt.Errorf("failed to read CSV records: %w", err)
-	}
-
 	trie := internal.NewTrie()
-	for i, rec := range records {
-		if i == 0 {
+	line := 0
+	
+	for {
+		rec, err := csvReader.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return nil, fmt.Errorf("failed to read CSV record on line %d: %w", line+1, err)
+		}
+		// csv.Reader counts lines starting from 1; we keep our own counter to track header
+		line++
+		if line == 1 {
 			continue // skip header
 		}
 		if len(rec) < 2 {
 			continue
 		}
 		name := rec[0]
-		var rel float64
 		rel, err := strconv.ParseFloat(rec[1], 64)
 		if err != nil {
-			return nil, fmt.Errorf("invalid relevancy value on line %d: %w", i+1, err)
+			return nil, fmt.Errorf("invalid relevancy value on line %d: %w", line, err)
 		}
 		trie.Insert(internal.Place{Name: name, Relevancy: rel})
 	}
