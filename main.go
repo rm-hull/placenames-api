@@ -14,6 +14,10 @@ import (
 	"github.com/rm-hull/place-names/internal"
 )
 
+type PlaceResponse struct {
+	Results []*internal.Place `json:"results"`
+}
+
 func main() {
 
 	trie, err := loadData("data/placenames_with_relevancy.csv.gz")
@@ -49,7 +53,7 @@ func loadData(filename string) (*internal.Trie, error) {
 	csvReader := csv.NewReader(gzReader)
 	trie := internal.NewTrie()
 	line := 0
-	
+
 	for {
 		rec, err := csvReader.Read()
 		if err == io.EOF {
@@ -71,7 +75,7 @@ func loadData(filename string) (*internal.Trie, error) {
 		if err != nil {
 			return nil, fmt.Errorf("invalid relevancy value on line %d: %w", line, err)
 		}
-		trie.Insert(internal.Place{Name: name, Relevancy: rel})
+		trie.Insert(&internal.Place{Name: name, Relevancy: rel})
 	}
 	trie.SortAllNodes()
 
@@ -86,18 +90,17 @@ func setupServer(trie *internal.Trie) *gin.Engine {
 			query := c.Param("query")
 			maxResults := 10
 			if maxStr := c.Query("max_results"); maxStr != "" {
-                if max, err := strconv.Atoi(maxStr); err == nil && max > 0 {
-                    maxResults = max
-                } else {
-                    c.JSON(http.StatusBadRequest, gin.H{"error": "max_results must be a positive integer"})
-                    return
-                }
+				if max, err := strconv.Atoi(maxStr); err == nil && max > 0 {
+					maxResults = max
+				} else {
+					c.JSON(http.StatusBadRequest, gin.H{"error": "max_results must be a positive integer"})
+					return
+				}
 			}
 
 			results := trie.FindByPrefix(query)
 			maxResults = min(maxResults, len(results))
-
-			c.JSON(http.StatusOK, map[string][]internal.Place{"results": results[:maxResults]})
+			c.JSON(http.StatusOK, PlaceResponse{Results: results[:maxResults]})
 		})
 	}
 	return r
