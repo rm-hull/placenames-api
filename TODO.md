@@ -94,7 +94,7 @@ Reading the code, the implementation is concise and functional. The main areas t
 1. Add unit tests for the Trie methods (Insert, SortAllNodes, FindByPrefix).
 2. Add logging in `loadData` with counts of processed/skipped rows and overall duration.
 3. ~~Cap `max_results` and return clear, structured validation errors.~~
-4. Replace per-node `Place` values with pointers or indices if memory profiling shows high usage.
+4. ~~Replace per-node `Place` values with pointers or indices if memory profiling shows high usage.~~
 5. Add a benchmark for `FindByPrefix` and insertion+sort to measure performance at scale.
 
 ## Suggested next steps
