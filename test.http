@@ -1,0 +1,1 @@
+GET http://localhost:8080/v1/place-names/prefix/yorks?max_results=10
