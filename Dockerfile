@@ -27,7 +27,7 @@ RUN apk --no-cache add curl ca-certificates tzdata && \
 RUN adduser -D -g '' appuser
 WORKDIR /app
 
-COPY --from=build /app/data ./data
+COPY --from=build /app/data /data
 COPY --from=build /app/placenames .
 COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=build /usr/share/zoneinfo /usr/share/zoneinfo
@@ -38,4 +38,4 @@ EXPOSE 8080/tcp
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8080/healthz || exit 1
 
-ENTRYPOINT ["./placenames", "api-server", "--file", "/app/data/placenames_with_relevancy.csv.gz", "--port", "8080"]
+ENTRYPOINT ["./placenames", "api-server", "--file", "/data/placenames_with_relevancy.csv.gz", "--port", "8080"]
