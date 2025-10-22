@@ -70,7 +70,7 @@ Reading the code, the implementation is concise and functional. The main areas t
 
 - Input validation / DoS protections:
   - Rate-limit endpoints or add per-IP quotas.
-  - Enforce upper `max_results` cap.
+  - ~~Enforce upper `max_results` cap.~~
 - Error handling:
   - Avoid returning internal errors to clients. Log details internally, return friendly messages externally.
 
@@ -93,7 +93,7 @@ Reading the code, the implementation is concise and functional. The main areas t
 
 1. Add unit tests for the Trie methods (Insert, SortAllNodes, FindByPrefix).
 2. Add logging in `loadData` with counts of processed/skipped rows and overall duration.
-3. Cap `max_results` and return clear, structured validation errors.
+3. ~~Cap `max_results` and return clear, structured validation errors.~~
 4. Replace per-node `Place` values with pointers or indices if memory profiling shows high usage.
 5. Add a benchmark for `FindByPrefix` and insertion+sort to measure performance at scale.
 

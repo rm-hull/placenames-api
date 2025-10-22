@@ -1,3 +1,4 @@
+### Autosuggest place name
 GET http://localhost:8080/v1/place-names/prefix/york?max_results=10
 Accept: application/json
 
