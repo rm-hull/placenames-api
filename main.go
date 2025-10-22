@@ -28,5 +28,5 @@ func main() {
 
 	rootCmd.AddCommand(apiServerCmd)
 
-	rootCmd.Execute()
+	_ = rootCmd.Execute()
 }
