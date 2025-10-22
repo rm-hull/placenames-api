@@ -61,8 +61,8 @@ Reading the code, the implementation is concise and functional. The main areas t
   - Log counts after load (total rows processed, skipped, errors).
 - Metrics:
   - Expose Prometheus metrics: records loaded, invalid records, request count, latency (histogram), and result count distribution.
-- Health/readiness:
-  - Add `/health` and `/ready` endpoints; readiness should check the trie is loaded.
+- ~~Health/readiness:~~
+  - ~~Add `/health` and `/ready` endpoints; readiness should check the trie is loaded.~~
 - Request instrumentation:
   - Middleware for latency, logging, and request IDs.
 
