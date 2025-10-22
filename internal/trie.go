@@ -13,8 +13,8 @@ import (
 )
 
 type Place struct {
-	Name      string  `json:"name"`
-	Relevancy float64 `json:"relevancy"`
+	Name      string
+	Relevancy float64
 }
 
 type TrieNode struct {
@@ -39,6 +39,8 @@ func (t *Trie) Insert(place *Place) {
 			node.Children[r] = &TrieNode{Children: make(map[rune]*TrieNode)}
 		}
 		node = node.Children[r]
+		// Store a pointer to the place at every node along the path
+		// to support efficient ranked prefix search.
 		node.Places = append(node.Places, place)
 	}
 }
