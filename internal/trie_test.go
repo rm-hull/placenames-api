@@ -24,7 +24,7 @@ func BenchmarkTrieMemoryUsage(b *testing.B) {
 
 			// Insert all test data
 			for _, p := range testData {
-				trie.Insert(p)
+				trie.Insert(&p)
 			}
 
 			// Search to ensure correctness
@@ -44,7 +44,7 @@ func BenchmarkTrieMemoryUsage(b *testing.B) {
 
 			// Insert all test data once to measure allocations
 			for _, p := range testData {
-				trie.Insert(p)
+				trie.Insert(&p)
 			}
 
 			// Verify trie is working correctly
@@ -68,7 +68,7 @@ func TestTrieBasics(t *testing.T) {
 
 	// Insert test data
 	for _, p := range places {
-		trie.Insert(p)
+		trie.Insert(&p)
 	}
 
 	// Test exact prefix match

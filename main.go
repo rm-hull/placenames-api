@@ -75,7 +75,7 @@ func loadData(filename string) (*internal.Trie, error) {
 		if err != nil {
 			return nil, fmt.Errorf("invalid relevancy value on line %d: %w", line, err)
 		}
-		trie.Insert(internal.Place{Name: name, Relevancy: rel})
+		trie.Insert(&internal.Place{Name: name, Relevancy: rel})
 	}
 	trie.SortAllNodes()
 

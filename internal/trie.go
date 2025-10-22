@@ -23,14 +23,10 @@ func NewTrie() *Trie {
 	return &Trie{root: &TrieNode{Children: make(map[rune]*TrieNode)}}
 }
 
-func (t *Trie) Insert(p Place) {
+func (t *Trie) Insert(place *Place) {
 	node := t.root
-	// Create a single copy of the Place that will be referenced by all nodes
-	place := &Place{
-		Name:      p.Name,
-		Relevancy: p.Relevancy,
-	}
-	lower := strings.ToLower(p.Name)
+
+	lower := strings.ToLower(place.Name)
 	for _, r := range lower {
 		if node.Children[r] == nil {
 			node.Children[r] = &TrieNode{Children: make(map[rune]*TrieNode)}
