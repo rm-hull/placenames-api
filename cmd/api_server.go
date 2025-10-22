@@ -42,11 +42,6 @@ func ApiServer(filePath string, port int, debug bool) error {
 		gin.Recovery(),
 		gin.LoggerWithWriter(gin.DefaultWriter, "/healthz", "/metrics"),
 		prometheus.Instrument(),
-		cachecontrol.New(cachecontrol.Config{
-			MaxAge:    cachecontrol.Duration(28 * 24 * time.Hour),
-			Immutable: true,
-			Public:    true,
-		}),
 		cors.Default(),
 	)
 
@@ -60,6 +55,11 @@ func ApiServer(filePath string, port int, debug bool) error {
 	}
 
 	v1 := r.Group("/v1")
+	v1.Use(cachecontrol.New(cachecontrol.Config{
+		MaxAge:    cachecontrol.Duration(28 * 24 * time.Hour),
+		Immutable: true,
+		Public:    true,
+	}))
 	v1.GET("/place-names/prefix/:query", routes.Prefix(trie))
 
 	addr := fmt.Sprintf(":%d", port)
