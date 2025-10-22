@@ -1,0 +1,11 @@
+.github
+.vscode
+init/
+data/
+!data/placenames_with_relevancy.csv.gz
+LICENSE.md
+README.md
+ATTRIBUTION.md
+GEMINI.md
+.env*
+docker-compose.yml

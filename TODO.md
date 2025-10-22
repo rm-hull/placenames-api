@@ -35,8 +35,8 @@ Reading the code, the implementation is concise and functional. The main areas t
 
 - Endpoint query parameter vs path param:
   - Consider using query params (e.g., `GET /v1/place-names?prefix=...&max_results=...`) instead of a path param to ease handling of spaces and special characters.
-- Cap `max_results` and validate:
-  - Add an upper bound (e.g., 1000) to avoid expensive large responses.
+- ~~Cap `max_results` and validate:~~
+  - ~~Add an upper bound (e.g., 1000) to avoid expensive large responses.~~
 - Response shape:
   - Use a response struct and include metadata: `{results: [], count: N, query: "...", max_results: M}` for clarity and future pagination.
 - Consistent error format:
@@ -76,7 +76,7 @@ Reading the code, the implementation is concise and functional. The main areas t
 
 ## Small code-style & maintainability suggestions
 
-- Move server setup/handlers to `server.go` (or `http/server.go`) and keep `main.go` minimal.
+- ~~Move server setup/handlers to `server.go` (or `http/server.go`) and keep `main.go` minimal.~~
 - Use dependency injection for handlers (struct with trie, logger, metrics) to make testing easier.
 - Extract constants for defaults (port, default max results, max allowed results).
 - Add comments documenting complexity and tie-break rules for `SortAllNodes`.
@@ -92,7 +92,7 @@ Reading the code, the implementation is concise and functional. The main areas t
 ## Prioritized checklist (small wins first)
 
 1. Add unit tests for the Trie methods (Insert, SortAllNodes, FindByPrefix).
-2. Add logging in `loadData` with counts of processed/skipped rows and overall duration.
+2. ~~Add logging in `loadData` with counts of processed/skipped rows and overall duration.~~
 3. ~~Cap `max_results` and return clear, structured validation errors.~~
 4. ~~Replace per-node `Place` values with pointers or indices if memory profiling shows high usage.~~
 5. Add a benchmark for `FindByPrefix` and insertion+sort to measure performance at scale.
@@ -101,4 +101,4 @@ Reading the code, the implementation is concise and functional. The main areas t
 
 - Draft unit tests and a small gzipped CSV fixture and run them.
 - Implement top-K maintenance per node (bounded memory) and associated tests/benchmarks.
-- Refactor nodes to store `*Place` pointers or indices plus a small conversion utility to keep public API the same.
+- ~~Refactor nodes to store `*Place` pointers or indices plus a small conversion utility to keep public API the same.~~
