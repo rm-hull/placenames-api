@@ -12,14 +12,14 @@ Reading the code, the implementation is concise and functional. The main areas t
 - Configurable strictness for CSV parsing: add strict vs permissive modes. In permissive mode, log and skip malformed rows rather than failing startup.
 - CSV line-number accuracy: your `line` counter increments after reading; ensure error messages clearly document which numbering scheme is used (header = line 1).
 - Input normalization: apply Unicode normalization (NFC) and trimming when storing and when querying to avoid mismatches on composed/decomposed characters.
-- Concurrency safety: the `Trie` is not synchronized. If you ever mutate it after startup or build it concurrently, protect it with a RWMutex or avoid post-start writes.
+- ~~Concurrency safety: the `Trie` is not synchronized. If you ever mutate it after startup or build it concurrently, protect it with a RWMutex or avoid post-start writes.~~ **WONT DO: unnecessary**
 
 ## Performance & scalability
 
-- Reduce duplicated Place copies:
-  - Currently each node stores full `Place` values along the path, which duplicates memory per character. Consider:
-    - Storing pointers (`*Place`) instead of values, or
-    - Storing indices/IDs into a global slice/map of `Place` objects.
+- ~~Reduce duplicated Place copies:~~
+  - ~~Currently each node stores full `Place` values along the path, which duplicates memory per character. Consider:~~
+    - ~~Storing pointers (`*Place`) instead of values, or~~
+    - ~~Storing indices/IDs into a global slice/map of `Place` objects.~~
 - Top-K bounding:
   - If clients request only small result sets, maintain only the top-K items per node (by relevancy) during insertion (use a min-heap/bounded slice). This bounds memory and avoids sorting large slices.
 - Sorting costs:
