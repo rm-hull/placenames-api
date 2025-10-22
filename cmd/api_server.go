@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/Depado/ginprom"
 	"github.com/gin-contrib/cors"
@@ -12,10 +13,10 @@ import (
 	"github.com/rm-hull/godx"
 	"github.com/rm-hull/placenames-api/internal"
 	"github.com/rm-hull/placenames-api/internal/routes"
-	"github.com/tavsec/gin-healthcheck/checks"
-
 	healthcheck "github.com/tavsec/gin-healthcheck"
+	"github.com/tavsec/gin-healthcheck/checks"
 	hc_config "github.com/tavsec/gin-healthcheck/config"
+	cachecontrol "go.eigsys.de/gin-cachecontrol/v2"
 )
 
 func ApiServer(filePath string, port int, debug bool) error {
@@ -54,6 +55,11 @@ func ApiServer(filePath string, port int, debug bool) error {
 	}
 
 	v1 := r.Group("/v1")
+	v1.Use(cachecontrol.New(cachecontrol.Config{
+		MaxAge:    cachecontrol.Duration(28 * 24 * time.Hour),
+		Immutable: true,
+		Public:    true,
+	}))
 	v1.GET("/place-names/prefix/:query", routes.Prefix(trie))
 
 	addr := fmt.Sprintf(":%d", port)
