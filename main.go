@@ -64,7 +64,7 @@ func loadData(filename string) (*internal.Trie, error) {
 			continue // skip header
 		}
 		if len(rec) < 2 {
-			continue
+			return nil, fmt.Errorf("invalid record on line %d: expected at least 2 fields, got %d", line, len(rec))
 		}
 		name := rec[0]
 		rel, err := strconv.ParseFloat(rec[1], 64)
