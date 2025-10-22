@@ -12,7 +12,7 @@ type Place struct {
 
 type TrieNode struct {
 	Children map[rune]*TrieNode
-	Places   []Place
+	Places   []*Place // Store pointers instead of values to reduce memory duplication
 }
 
 type Trie struct {
@@ -25,13 +25,18 @@ func NewTrie() *Trie {
 
 func (t *Trie) Insert(p Place) {
 	node := t.root
+	// Create a single copy of the Place that will be referenced by all nodes
+	place := &Place{
+		Name:      p.Name,
+		Relevancy: p.Relevancy,
+	}
 	lower := strings.ToLower(p.Name)
 	for _, r := range lower {
 		if node.Children[r] == nil {
 			node.Children[r] = &TrieNode{Children: make(map[rune]*TrieNode)}
 		}
 		node = node.Children[r]
-		node.Places = append(node.Places, p)
+		node.Places = append(node.Places, place)
 	}
 }
 
@@ -56,14 +61,14 @@ func (t *Trie) SortAllNodes() {
 	dfs(t.root)
 }
 
-func (t *Trie) FindByPrefix(prefix string) []Place {
+func (t *Trie) FindByPrefix(prefix string) []*Place {
 	node := t.root
 	lower := strings.ToLower(prefix)
 	for _, r := range lower {
 		next := node.Children[r]
-        if next == nil {
-            return []Place{}
-        }
+		if next == nil {
+			return []*Place{}
+		}
 		node = next
 	}
 

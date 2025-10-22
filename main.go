@@ -49,7 +49,7 @@ func loadData(filename string) (*internal.Trie, error) {
 	csvReader := csv.NewReader(gzReader)
 	trie := internal.NewTrie()
 	line := 0
-	
+
 	for {
 		rec, err := csvReader.Read()
 		if err == io.EOF {
@@ -86,18 +86,17 @@ func setupServer(trie *internal.Trie) *gin.Engine {
 			query := c.Param("query")
 			maxResults := 10
 			if maxStr := c.Query("max_results"); maxStr != "" {
-                if max, err := strconv.Atoi(maxStr); err == nil && max > 0 {
-                    maxResults = max
-                } else {
-                    c.JSON(http.StatusBadRequest, gin.H{"error": "max_results must be a positive integer"})
-                    return
-                }
+				if max, err := strconv.Atoi(maxStr); err == nil && max > 0 {
+					maxResults = max
+				} else {
+					c.JSON(http.StatusBadRequest, gin.H{"error": "max_results must be a positive integer"})
+					return
+				}
 			}
 
 			results := trie.FindByPrefix(query)
 			maxResults = min(maxResults, len(results))
-
-			c.JSON(http.StatusOK, map[string][]internal.Place{"results": results[:maxResults]})
+			c.JSON(http.StatusOK, map[string][]*internal.Place{"results": results[:maxResults]})
 		})
 	}
 	return r
