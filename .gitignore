@@ -32,3 +32,5 @@ go.work.sum
 # .vscode/
 
 data/
+tmp/
+__debug_bin*
