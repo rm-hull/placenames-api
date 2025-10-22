@@ -61,9 +61,9 @@ func (t *Trie) FindByPrefix(prefix string) []Place {
 	lower := strings.ToLower(prefix)
 	for _, r := range lower {
 		next := node.Children[r]
-		if next == nil {
-			return nil
-		}
+        if next == nil {
+            return []Place{}
+        }
 		node = next
 	}
 
