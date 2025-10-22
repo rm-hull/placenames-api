@@ -57,10 +57,10 @@ Reading the code, the implementation is concise and functional. The main areas t
 
 ## Observability & operational
 
-- Add structured logging:
-  - Log counts after load (total rows processed, skipped, errors).
-- Metrics:
-  - Expose Prometheus metrics: records loaded, invalid records, request count, latency (histogram), and result count distribution.
+- ~~Add structured logging:~~
+  - ~~Log counts after load (total rows processed, skipped, errors).~~
+- ~~Metrics:~~
+  - ~~Expose Prometheus metrics: records loaded, invalid records, request count, latency (histogram), and result count distribution.~~
 - ~~Health/readiness:~~
   - ~~Add `/health` and `/ready` endpoints; readiness should check the trie is loaded.~~
 - Request instrumentation:

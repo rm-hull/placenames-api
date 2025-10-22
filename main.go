@@ -13,6 +13,7 @@ import (
 	"github.com/Depado/ginprom"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/rm-hull/godx"
 	"github.com/rm-hull/place-names/internal"
 
 	healthcheck "github.com/tavsec/gin-healthcheck"
@@ -25,6 +26,11 @@ type PlaceResponse struct {
 }
 
 func main() {
+	godx.GitVersion()
+	godx.EnvironmentVars()
+	godx.UserInfo()
+
+	port := 8080
 
 	trie, err := loadData("data/placenames_with_relevancy.csv.gz")
 	if err != nil {
@@ -35,10 +41,16 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error setting up server: %v", err)
 	}
-	log.Fatal(r.Run(":8080"))
+
+	addr := fmt.Sprintf(":%d", port)
+	log.Printf("Starting HTTP API Server on port %d...", port)
+	if err := r.Run(addr); err != nil && err != http.ErrServerClosed {
+		log.Fatalf("HTTP API Server failed to start on port %d: %v", port, err)
+	}
 }
 
 func loadData(filename string) (*internal.Trie, error) {
+	log.Printf("Loading data from: %s", filename)
 	file, err := os.Open(filename)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open file: %w", err)
@@ -87,6 +99,7 @@ func loadData(filename string) (*internal.Trie, error) {
 		trie.Insert(&internal.Place{Name: name, Relevancy: rel})
 	}
 	trie.SortAllNodes()
+	log.Printf("Loaded %d place names", line)
 
 	return trie, nil
 }
