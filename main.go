@@ -14,6 +14,10 @@ import (
 	"github.com/rm-hull/place-names/internal"
 )
 
+type PlaceResponse struct {
+	Results []*internal.Place `json:"results"`
+}
+
 func main() {
 
 	trie, err := loadData("data/placenames_with_relevancy.csv.gz")
@@ -96,7 +100,7 @@ func setupServer(trie *internal.Trie) *gin.Engine {
 
 			results := trie.FindByPrefix(query)
 			maxResults = min(maxResults, len(results))
-			c.JSON(http.StatusOK, map[string][]*internal.Place{"results": results[:maxResults]})
+			c.JSON(http.StatusOK, PlaceResponse{Results: results[:maxResults]})
 		})
 	}
 	return r
