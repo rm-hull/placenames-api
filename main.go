@@ -10,6 +10,7 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/Depado/ginprom"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/rm-hull/place-names/internal"
@@ -93,9 +94,16 @@ func loadData(filename string) (*internal.Trie, error) {
 func setupServer(trie *internal.Trie) (*gin.Engine, error) {
 	r := gin.New()
 
+	prometheus := ginprom.New(
+		ginprom.Engine(r),
+		ginprom.Path("/metrics"),
+		ginprom.Ignore("/healthz"),
+	)
+
 	r.Use(
 		gin.Recovery(),
-		gin.LoggerWithWriter(gin.DefaultWriter, "/healthz"),
+		gin.LoggerWithWriter(gin.DefaultWriter, "/healthz", "/metrics"),
+		prometheus.Instrument(),
 		cors.Default(),
 	)
 

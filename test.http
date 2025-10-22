@@ -4,7 +4,11 @@ Accept: application/json
 
 ### Healthcheck
 GET http://localhost:8080/healthz
+Accept: application/json
 
+### Prometheus
+GET http://localhost:8080/metrics
+Accept: application/json
 
 ### CORS Preflight
 OPTIONS http://localhost:8080/v1/place-names/prefix/york
