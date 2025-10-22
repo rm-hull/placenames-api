@@ -3,3 +3,9 @@ Accept: application/json
 
 ### Healthcheck
 GET http://localhost:8080/healthz
+
+
+### CORS Preflight
+OPTIONS http://localhost:8080/v1/place-names/prefix/york
+Access-Control-Request-Method: GET
+Origin: http://example.com

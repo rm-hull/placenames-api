@@ -10,6 +10,7 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/rm-hull/place-names/internal"
 
@@ -95,6 +96,7 @@ func setupServer(trie *internal.Trie) (*gin.Engine, error) {
 	r.Use(
 		gin.Recovery(),
 		gin.LoggerWithWriter(gin.DefaultWriter, "/healthz"),
+		cors.Default(),
 	)
 
 	err := healthcheck.New(r, hc_config.DefaultConfig(), []checks.Check{})
