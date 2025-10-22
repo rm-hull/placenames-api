@@ -3,13 +3,37 @@ package routes
 import (
 	"net/http"
 	"strconv"
+	"unicode"
 
 	"github.com/gin-gonic/gin"
 	"github.com/rm-hull/placenames-api/internal"
 )
 
+type Result struct {
+	Name      string  `json:"name"`
+	Relevancy float64 `json:"relevancy"`
+}
+
 type PlaceResponse struct {
-	Results []*internal.Place `json:"results"`
+	Results []Result `json:"results"`
+}
+
+func applyPrefixCasing(candidate string, prefix string) string {
+	if len(prefix) == 0 {
+		return candidate
+	}
+
+	result := []rune(candidate)
+	prefixRunes := []rune(prefix)
+	for i := range min(len(prefixRunes), len(result)) {
+		if unicode.IsUpper(prefixRunes[i]) {
+			result[i] = unicode.ToUpper(result[i])
+		} else {
+			result[i] = unicode.ToLower(result[i])
+		}
+	}
+
+	return string(result)
 }
 
 func Prefix(trie *internal.Trie) gin.HandlerFunc {
@@ -25,8 +49,17 @@ func Prefix(trie *internal.Trie) gin.HandlerFunc {
 			}
 		}
 
-		results := trie.FindByPrefix(query)
-		maxResults = min(maxResults, len(results))
-		c.JSON(http.StatusOK, PlaceResponse{Results: results[:maxResults]})
+		matches := trie.FindByPrefix(query)
+		maxResults = min(maxResults, len(matches))
+
+		results := make([]Result, maxResults)
+		for i, match := range matches[:maxResults] {
+			results[i] = Result{
+				Name:      applyPrefixCasing(match.Name, query),
+				Relevancy: match.Relevancy,
+			}
+		}
+
+		c.JSON(http.StatusOK, PlaceResponse{Results: results})
 	}
 }
