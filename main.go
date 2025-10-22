@@ -80,12 +80,12 @@ func setupServer(trie *internal.Trie) *gin.Engine {
 			query := c.Param("query")
 			maxResults := 10
 			if maxStr := c.Query("max_results"); maxStr != "" {
-				if max, err := strconv.Atoi(maxStr); err == nil && max > 0 {
-					maxResults = max
-				} else if err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{"error": "max_results must be a positive number"})
-					return
-				}
+                if max, err := strconv.Atoi(maxStr); err == nil && max > 0 {
+                    maxResults = max
+                } else {
+                    c.JSON(http.StatusBadRequest, gin.H{"error": "max_results must be a positive integer"})
+                    return
+                }
 			}
 
 			results := trie.FindByPrefix(query)
