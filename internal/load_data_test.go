@@ -4,6 +4,7 @@ import (
 	"compress/gzip"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -61,6 +62,9 @@ Luton,0.8
 		if err == nil {
 			t.Fatal("expected an error, got nil")
 		}
+		if !strings.Contains(err.Error(), "no such file or directory") {
+			t.Errorf("expected error to contain 'no such file or directory', got %v", err)
+		}
 	})
 
 	t.Run("invalid gzip file", func(t *testing.T) {
@@ -73,6 +77,9 @@ Luton,0.8
 		_, err := LoadData(path)
 		if err == nil {
 			t.Fatal("expected an error, got nil")
+		}
+		if !strings.Contains(err.Error(), "invalid header") {
+			t.Errorf("expected error to contain 'invalid header', got %v", err)
 		}
 	})
 
@@ -87,6 +94,9 @@ Paris,invalid
 		if err == nil {
 			t.Fatal("expected an error for invalid relevancy, got nil")
 		}
+		if !strings.Contains(err.Error(), "invalid syntax") {
+			t.Errorf("expected error to contain 'invalid syntax', got %v", err)
+		}
 	})
 
 	t.Run("csv content with wrong number of columns", func(t *testing.T) {
@@ -98,6 +108,9 @@ Paris
 		_, err := LoadData(path)
 		if err == nil {
 			t.Fatal("expected an error for wrong number of columns, got nil")
+		}
+		if !strings.Contains(err.Error(), "wrong number of fields") {
+			t.Errorf("expected error to contain 'wrong number of fields', got %v", err)
 		}
 	})
 
