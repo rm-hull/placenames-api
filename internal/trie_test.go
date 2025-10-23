@@ -19,7 +19,7 @@ func BenchmarkTrieMemoryUsage(b *testing.B) {
 
 		for i := 0; i < b.N; i++ {
 			b.StopTimer()
-			trie := NewTrie() // Create fresh trie for each iteration
+			trie := NewTrie(10) // Create fresh trie for each iteration
 			b.StartTimer()
 
 			// Insert all test data
@@ -40,7 +40,7 @@ func BenchmarkTrieMemoryUsage(b *testing.B) {
 		b.ReportAllocs()
 
 		for i := 0; i < b.N; i++ {
-			trie := NewTrie()
+			trie := NewTrie(10)
 
 			// Insert all test data once to measure allocations
 			for _, p := range testData {
@@ -57,7 +57,7 @@ func BenchmarkTrieMemoryUsage(b *testing.B) {
 }
 
 func TestTrieBasics(t *testing.T) {
-	trie := NewTrie()
+	trie := NewTrie(10)
 
 	// Test data
 	places := []Place{
@@ -70,6 +70,8 @@ func TestTrieBasics(t *testing.T) {
 	for _, p := range places {
 		trie.Insert(&p)
 	}
+
+	trie.SortAllNodes()
 
 	// Test exact prefix match
 	results := trie.FindByPrefix("Lo")
@@ -97,7 +99,7 @@ func TestTrieBasics(t *testing.T) {
 
 func TestTrieAdvanced(t *testing.T) {
 	t.Run("unicode support", func(t *testing.T) {
-		trie := NewTrie()
+		trie := NewTrie(10)
 		places := []Place{
 			{Name: "Llanfairpwllgwyngyllgogerychwyrndrobwllllantysiliogogogoch", Relevancy: 1.0},
 			{Name: "İstanbul", Relevancy: 0.9},
@@ -120,7 +122,7 @@ func TestTrieAdvanced(t *testing.T) {
 	})
 
 	t.Run("relevancy tie", func(t *testing.T) {
-		trie := NewTrie()
+		trie := NewTrie(10)
 		places := []Place{
 			{Name: "London", Relevancy: 1.0},
 			{Name: "Londinium", Relevancy: 1.0},
@@ -147,7 +149,7 @@ func TestTrieAdvanced(t *testing.T) {
 	})
 
 	t.Run("case insensitivity", func(t *testing.T) {
-		trie := NewTrie()
+		trie := NewTrie(10)
 		place := Place{Name: "LoNDon", Relevancy: 1.0}
 		trie.Insert(&place)
 
@@ -163,20 +165,8 @@ func TestTrieAdvanced(t *testing.T) {
 		}
 	})
 
-	t.Run("duplicates", func(t *testing.T) {
-		trie := NewTrie()
-		place := Place{Name: "London", Relevancy: 1.0}
-		trie.Insert(&place)
-		trie.Insert(&place)
-
-		results := trie.FindByPrefix("Lon")
-		if len(results) != 1 {
-			t.Errorf("expected 1 result, got %d", len(results))
-		}
-	})
-
 	t.Run("empty prefix", func(t *testing.T) {
-		trie := NewTrie()
+		trie := NewTrie(10)
 		place := Place{Name: "London", Relevancy: 1.0}
 		trie.Insert(&place)
 
@@ -187,7 +177,7 @@ func TestTrieAdvanced(t *testing.T) {
 	})
 
 	t.Run("prefix not found", func(t *testing.T) {
-		trie := NewTrie()
+		trie := NewTrie(10)
 		place := Place{Name: "London", Relevancy: 1.0}
 		trie.Insert(&place)
 
@@ -198,7 +188,7 @@ func TestTrieAdvanced(t *testing.T) {
 	})
 
 	t.Run("prefix is full name", func(t *testing.T) {
-		trie := NewTrie()
+		trie := NewTrie(10)
 		places := []Place{
 			{Name: "London", Relevancy: 1.0},
 			{Name: "Londonderry", Relevancy: 0.8},

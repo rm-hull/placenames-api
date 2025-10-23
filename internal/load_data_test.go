@@ -42,7 +42,7 @@ London,1.0
 Luton,0.8
 `
 		path := createTestGzipFile(t, content)
-		trie, err := LoadData(path)
+		trie, err := LoadData(path, 100)
 		if err != nil {
 			t.Fatalf("expected no error, got %v", err)
 		}
@@ -62,7 +62,7 @@ Luton,0.8
 	})
 
 	t.Run("file not found", func(t *testing.T) {
-		_, err := LoadData("non-existent-file.csv.gz")
+		_, err := LoadData("non-existent-file.csv.gz", 100)
 		if err == nil {
 			t.Fatal("expected an error, got nil")
 		}
@@ -78,7 +78,7 @@ Luton,0.8
 			t.Fatalf("failed to create temp file: %v", err)
 		}
 
-		_, err := LoadData(path)
+		_, err := LoadData(path, 100)
 		if err == nil {
 			t.Fatal("expected an error, got nil")
 		}
@@ -94,7 +94,7 @@ London,1.0
 Paris,invalid
 `
 		path := createTestGzipFile(t, content)
-		_, err := LoadData(path)
+		_, err := LoadData(path, 100)
 		if err == nil {
 			t.Fatal("expected an error for invalid relevancy, got nil")
 		}
@@ -109,7 +109,7 @@ London,1.0
 Paris
 `
 		path := createTestGzipFile(t, content)
-		_, err := LoadData(path)
+		_, err := LoadData(path, 100)
 		if err == nil {
 			t.Fatal("expected an error for wrong number of columns, got nil")
 		}
@@ -124,7 +124,7 @@ Paris
 "London,1.0
 `
 		path := createTestGzipFile(t, content)
-		_, err := LoadData(path)
+		_, err := LoadData(path, 100)
 		if err == nil {
 			t.Fatal("expected an error for malformed CSV, got nil")
 		}
@@ -142,7 +142,7 @@ Paris
 			t.Skipf("data file not found: %s, skipping test", dataFile)
 		}
 
-		trie, err := LoadData(dataFile)
+		trie, err := LoadData(dataFile, 100)
 		if err != nil {
 			t.Fatalf("expected no error, got %v", err)
 		}

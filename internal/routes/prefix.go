@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 	"unicode"
@@ -41,10 +42,12 @@ func Prefix(trie *internal.Trie) gin.HandlerFunc {
 		query := c.Param("query")
 		maxResults := 10
 		if maxStr := c.Query("max_results"); maxStr != "" {
-			if max, err := strconv.Atoi(maxStr); err == nil && max > 0 && max <= 100 {
+			if max, err := strconv.Atoi(maxStr); err == nil && max > 0 && max <= trie.TopK() {
 				maxResults = max
 			} else {
-				c.JSON(http.StatusBadRequest, gin.H{"error": "max_results must be a positive integer less than or equal to 100"})
+				c.JSON(http.StatusBadRequest, gin.H{
+					"error": fmt.Sprintf("max_results must be a positive integer less than or equal to %d", trie.TopK()),
+				})
 				return
 			}
 		}

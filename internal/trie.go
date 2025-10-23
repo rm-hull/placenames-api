@@ -19,60 +19,50 @@ type Place struct {
 
 type TrieNode struct {
 	Children map[rune]*TrieNode
-	Places   []*Place // Store pointers instead of values to reduce memory duplication
+	Places   *MinHeap[*Place] // Store pointers instead of values to reduce memory duplication
 }
 
 type Trie struct {
 	root *TrieNode
+	less func(a, b *Place) bool
+	topK int
 }
 
-func NewTrie() *Trie {
-	return &Trie{root: &TrieNode{Children: make(map[rune]*TrieNode)}}
+func NewTrie(maxPerNode int) *Trie {
+	less := func(a, b *Place) bool {
+		if a.Relevancy == b.Relevancy {
+			return len(a.Name) > len(b.Name)
+		}
+		return a.Relevancy < b.Relevancy
+	}
+	return &Trie{
+		root: &TrieNode{
+			Children: make(map[rune]*TrieNode),
+			Places:   NewMinHeap(less),
+		},
+		less: less,
+		topK: maxPerNode,
+	}
+}
+
+func (t *Trie) TopK() int {
+	return t.topK
 }
 
 func (t *Trie) Insert(place *Place) {
 	node := t.root
-
 	lower := strings.ToLower(place.Name)
+
 	for _, r := range lower {
 		if node.Children[r] == nil {
-			node.Children[r] = &TrieNode{Children: make(map[rune]*TrieNode)}
+			node.Children[r] = &TrieNode{
+				Children: make(map[rune]*TrieNode),
+				Places:   NewMinHeap(t.less),
+			}
 		}
 		node = node.Children[r]
-
-		shouldInsert := true
-		for _, p := range node.Places {
-			if p.Name == place.Name {
-				// Duplicate, do not insert
-				shouldInsert = false
-				break
-			}
-		}
-
-		// Store a pointer to the place at every node along the path
-		// to support efficient ranked prefix search.
-		if shouldInsert {
-			node.Places = append(node.Places, place)
-		}
+		node.Places.PushBounded(place, t.topK)
 	}
-}
-
-// After all insertions, sort the Places slice at every node by (relevancy DESC, name length ASC)
-func (t *Trie) SortAllNodes() {
-	var dfs func(*TrieNode)
-	dfs = func(n *TrieNode) {
-		sort.SliceStable(n.Places, func(i, j int) bool {
-			pi, pj := n.Places[i], n.Places[j]
-			if pi.Relevancy == pj.Relevancy {
-				return len(pi.Name) < len(pj.Name)
-			}
-			return pi.Relevancy > pj.Relevancy
-		})
-		for _, child := range n.Children {
-			dfs(child)
-		}
-	}
-	dfs(t.root)
 }
 
 func (t *Trie) FindByPrefix(prefix string) []*Place {
@@ -86,10 +76,25 @@ func (t *Trie) FindByPrefix(prefix string) []*Place {
 		node = next
 	}
 
-	return node.Places
+	return node.Places.Items()
 }
 
-func LoadData(filename string) (*Trie, error) {
+func (t *Trie) SortAllNodes() {
+	var dfs func(*TrieNode)
+	dfs = func(n *TrieNode) {
+		if n.Places != nil && len(n.Places.data) > 1 {
+			sort.Slice(n.Places.data, func(i, j int) bool {
+				return t.less(n.Places.data[j], n.Places.data[i]) // note: reverse order
+			})
+		}
+		for _, child := range n.Children {
+			dfs(child)
+		}
+	}
+	dfs(t.root)
+}
+
+func LoadData(filename string, topK int) (*Trie, error) {
 	log.Printf("Loading data from: %s", filename)
 	file, err := os.Open(filename)
 	if err != nil {
@@ -113,7 +118,7 @@ func LoadData(filename string) (*Trie, error) {
 
 	csvReader := csv.NewReader(gzReader)
 	csvReader.FieldsPerRecord = -1 // Allow variable number of fields
-	trie := NewTrie()
+	trie := NewTrie(topK)
 	line := 0
 
 	for {
