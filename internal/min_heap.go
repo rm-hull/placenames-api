@@ -51,7 +51,7 @@ func (h *MinHeap[T]) PushBounded(x T, k int) {
 	if len(h.data) < k {
 		heap.Push(h, x)
 	} else if h.less(h.data[0], x) {
-		heap.Pop(h)
-		heap.Push(h, x)
+		h.data[0] = x
+		heap.Fix(h, 0)
 	}
 }

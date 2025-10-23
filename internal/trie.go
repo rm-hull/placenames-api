@@ -76,7 +76,7 @@ func (t *Trie) FindByPrefix(prefix string) []*Place {
 		node = next
 	}
 
-	return node.Places.data
+	return node.Places.Items()
 }
 
 func (t *Trie) SortAllNodes() {
