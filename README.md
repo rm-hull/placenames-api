@@ -27,5 +27,5 @@ This was then uploaded to ChatGPT along with the following prompt:
 > Make sure you give a relevancy score for every line. Just do it all in one go - I dont want a sample
 > of 50 or anything. Give me a link where i can download the CSV.
 
-This results in the CSV file [./data/placenames_with_relevancy.csv](./data/placenames_with_relevancy.csv)
+This results in the gzipped CSV file [./data/placenames_with_relevancy.csv.gz](./data/placenames_with_relevancy.csv.gz)
 which is then loaded into a [trie structure](https://en.wikipedia.org/wiki/Trie) when the server starts.
