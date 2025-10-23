@@ -19,13 +19,13 @@ import (
 	cachecontrol "go.eigsys.de/gin-cachecontrol/v2"
 )
 
-func ApiServer(filePath string, port int, debug bool) error {
+func ApiServer(filePath string, port int, debug bool, topK int) error {
 
 	godx.GitVersion()
 	godx.EnvironmentVars()
 	godx.UserInfo()
 
-	trie, err := internal.LoadData(filePath)
+	trie, err := internal.LoadData(filePath, topK)
 	if err != nil {
 		return fmt.Errorf("error loading data: %w", err)
 	}

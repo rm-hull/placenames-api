@@ -85,13 +85,13 @@ Reading the code, the implementation is concise and functional. The main areas t
 ## Potential higher-level refactors (for larger scale)
 
 - Compact trie (radix or DAWG) to reduce memory/perf overhead.
-- Maintain top-K per node during insertion (min-heap) rather than storing all matches.
+- ~~Maintain top-K per node during insertion (min-heap) rather than storing all matches.~~
 - Switch to a search-index (Bleve or similar) if you need fuzzy search, tokenization, full-text ranking; tradeoff: increased dependencies/operational complexity.
 - Serialize a pre-built index to disk (binary snapshot) to avoid reparsing CSV on every start.
 
 ## Prioritized checklist (small wins first)
 
-1. Add unit tests for the Trie methods (Insert, SortAllNodes, FindByPrefix).
+1. ~~Add unit tests for the Trie methods (Insert, SortAllNodes, FindByPrefix).~~
 2. ~~Add logging in `loadData` with counts of processed/skipped rows and overall duration.~~
 3. ~~Cap `max_results` and return clear, structured validation errors.~~
 4. ~~Replace per-node `Place` values with pointers or indices if memory profiling shows high usage.~~
@@ -99,6 +99,6 @@ Reading the code, the implementation is concise and functional. The main areas t
 
 ## Suggested next steps
 
-- Draft unit tests and a small gzipped CSV fixture and run them.
-- Implement top-K maintenance per node (bounded memory) and associated tests/benchmarks.
+- ~~Draft unit tests and a small gzipped CSV fixture and run them.~~
+- ~~Implement top-K maintenance per node (bounded memory) and associated tests/benchmarks.~~
 - ~~Refactor nodes to store `*Place` pointers or indices plus a small conversion utility to keep public API the same.~~
