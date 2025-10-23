@@ -18,10 +18,14 @@ func createTestGzipFile(t *testing.T, content string) string {
 	if err != nil {
 		t.Fatalf("failed to create temp file: %v", err)
 	}
-	defer file.Close()
+	defer func() {
+		_ = file.Close()
+	}()
 
 	gzWriter := gzip.NewWriter(file)
-	defer gzWriter.Close()
+	defer func() {
+		_ = gzWriter.Close()
+	}()
 
 	_, err = gzWriter.Write([]byte(content))
 	if err != nil {
@@ -94,8 +98,8 @@ Paris,invalid
 		if err == nil {
 			t.Fatal("expected an error for invalid relevancy, got nil")
 		}
-		if !strings.Contains(err.Error(), "invalid syntax") {
-			t.Errorf("expected error to contain 'invalid syntax', got %v", err)
+		if !strings.Contains(err.Error(), "invalid relevancy value") {
+			t.Errorf("expected error to contain 'invalid relevancy value', got %v", err)
 		}
 	})
 
@@ -109,8 +113,8 @@ Paris
 		if err == nil {
 			t.Fatal("expected an error for wrong number of columns, got nil")
 		}
-		if !strings.Contains(err.Error(), "wrong number of fields") {
-			t.Errorf("expected error to contain 'wrong number of fields', got %v", err)
+		if !strings.Contains(err.Error(), "expected at least 2 fields") {
+			t.Errorf("expected error to contain 'expected at least 2 fields', got %v", err)
 		}
 	})
 

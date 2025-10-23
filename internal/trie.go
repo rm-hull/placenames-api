@@ -103,6 +103,7 @@ func LoadData(filename string) (*Trie, error) {
 	}()
 
 	csvReader := csv.NewReader(gzReader)
+	csvReader.FieldsPerRecord = -1 // Allow variable number of fields
 	trie := NewTrie()
 	line := 0
 
