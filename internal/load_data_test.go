@@ -128,23 +128,13 @@ Paris
 			t.Fatalf("expected no error, got %v", err)
 		}
 
-		results := trie.FindByPrefix("London")
+		results := trie.FindByPrefix("Lond")
 		if len(results) == 0 {
-			t.Fatal("expected at least one result for 'London', got 0")
+			t.Fatal("expected at least one result for 'Lond', got 0")
 		}
 
-		// Check if "London" is in the top results. Because of the sorting,
-		// it should be one of the first results.
-		found := false
-		for _, p := range results {
-			if p.Name == "London" {
-				found = true
-				break
-			}
-		}
-
-		if !found {
-			t.Error("expected to find 'London' in the results")
+		if results[0].Name != "London" {
+			t.Errorf("expected the first result to be 'London', got %s", results[0].Name)
 		}
 	})
 }
