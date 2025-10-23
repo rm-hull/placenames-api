@@ -39,9 +39,21 @@ func (t *Trie) Insert(place *Place) {
 			node.Children[r] = &TrieNode{Children: make(map[rune]*TrieNode)}
 		}
 		node = node.Children[r]
+
+		shouldInsert := true
+		for _, p := range node.Places {
+			if p.Name == place.Name {
+				// Duplicate, do not insert
+				shouldInsert = false
+				break
+			}
+		}
+
 		// Store a pointer to the place at every node along the path
 		// to support efficient ranked prefix search.
-		node.Places = append(node.Places, place)
+		if shouldInsert {
+			node.Places = append(node.Places, place)
+		}
 	}
 }
 
@@ -49,9 +61,6 @@ func (t *Trie) Insert(place *Place) {
 func (t *Trie) SortAllNodes() {
 	var dfs func(*TrieNode)
 	dfs = func(n *TrieNode) {
-		if n == nil {
-			return
-		}
 		sort.SliceStable(n.Places, func(i, j int) bool {
 			pi, pj := n.Places[i], n.Places[j]
 			if pi.Relevancy == pj.Relevancy {
@@ -103,22 +112,25 @@ func LoadData(filename string) (*Trie, error) {
 	}()
 
 	csvReader := csv.NewReader(gzReader)
+	csvReader.FieldsPerRecord = -1 // Allow variable number of fields
 	trie := NewTrie()
 	line := 0
 
 	for {
+		line++
 		rec, err := csvReader.Read()
 		if err == io.EOF {
 			break
 		}
 		if err != nil {
-			return nil, fmt.Errorf("failed to read CSV record on line %d: %w", line+1, err)
+			return nil, fmt.Errorf("failed to read CSV record on line %d: %w", line, err)
 		}
-		// csv.Reader counts lines starting from 1; we keep our own counter to track header
-		line++
+
+		// Skip header
 		if line == 1 {
-			continue // skip header
+			continue
 		}
+
 		if len(rec) < 2 {
 			return nil, fmt.Errorf("invalid record on line %d: expected at least 2 fields, got %d", line, len(rec))
 		}

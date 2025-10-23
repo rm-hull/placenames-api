@@ -94,3 +94,133 @@ func TestTrieBasics(t *testing.T) {
 		t.Errorf("expected 0 results for 'X', got %d", len(results))
 	}
 }
+
+func TestTrieAdvanced(t *testing.T) {
+	t.Run("unicode support", func(t *testing.T) {
+		trie := NewTrie()
+		places := []Place{
+			{Name: "Llanfairpwllgwyngyllgogerychwyrndrobwllllantysiliogogogoch", Relevancy: 1.0},
+			{Name: "İstanbul", Relevancy: 0.9},
+		}
+
+		for _, p := range places {
+			trie.Insert(&p)
+		}
+
+		trie.SortAllNodes()
+
+		results := trie.FindByPrefix("İstan")
+		if len(results) != 1 {
+			t.Errorf("expected 1 result for 'İstan', got %d", len(results))
+		}
+
+		if results[0].Name != "İstanbul" {
+			t.Errorf("expected result to be İstanbul, got %s", results[0].Name)
+		}
+	})
+
+	t.Run("relevancy tie", func(t *testing.T) {
+		trie := NewTrie()
+		places := []Place{
+			{Name: "London", Relevancy: 1.0},
+			{Name: "Londinium", Relevancy: 1.0},
+		}
+
+		for _, p := range places {
+			trie.Insert(&p)
+		}
+
+		trie.SortAllNodes()
+
+		results := trie.FindByPrefix("Lon")
+		if len(results) != 2 {
+			t.Fatalf("expected 2 results, got %d", len(results))
+		}
+
+		if results[0].Name != "London" {
+			t.Errorf("expected first result to be London, got %s", results[0].Name)
+		}
+
+		if results[1].Name != "Londinium" {
+			t.Errorf("expected second result to be Londinium, got %s", results[1].Name)
+		}
+	})
+
+	t.Run("case insensitivity", func(t *testing.T) {
+		trie := NewTrie()
+		place := Place{Name: "LoNDon", Relevancy: 1.0}
+		trie.Insert(&place)
+
+		queries := []string{"london", "LONDON", "LoNdOn", "l"}
+		for _, q := range queries {
+			results := trie.FindByPrefix(q)
+			if len(results) != 1 {
+				t.Errorf("expected 1 result for query '%s', got %d", q, len(results))
+			}
+			if results[0].Name != "LoNDon" {
+				t.Errorf("expected result to be LoNDon, got %s", results[0].Name)
+			}
+		}
+	})
+
+	t.Run("duplicates", func(t *testing.T) {
+		trie := NewTrie()
+		place := Place{Name: "London", Relevancy: 1.0}
+		trie.Insert(&place)
+		trie.Insert(&place)
+
+		results := trie.FindByPrefix("Lon")
+		if len(results) != 1 {
+			t.Errorf("expected 1 result, got %d", len(results))
+		}
+	})
+
+	t.Run("empty prefix", func(t *testing.T) {
+		trie := NewTrie()
+		place := Place{Name: "London", Relevancy: 1.0}
+		trie.Insert(&place)
+
+		results := trie.FindByPrefix("")
+		if len(results) != 0 {
+			t.Errorf("expected 0 results for empty prefix, got %d", len(results))
+		}
+	})
+
+	t.Run("prefix not found", func(t *testing.T) {
+		trie := NewTrie()
+		place := Place{Name: "London", Relevancy: 1.0}
+		trie.Insert(&place)
+
+		results := trie.FindByPrefix("X")
+		if len(results) != 0 {
+			t.Errorf("expected 0 results for prefix 'X', got %d", len(results))
+		}
+	})
+
+	t.Run("prefix is full name", func(t *testing.T) {
+		trie := NewTrie()
+		places := []Place{
+			{Name: "London", Relevancy: 1.0},
+			{Name: "Londonderry", Relevancy: 0.8},
+		}
+
+		for _, p := range places {
+			trie.Insert(&p)
+		}
+
+		trie.SortAllNodes()
+
+		results := trie.FindByPrefix("London")
+		if len(results) != 2 {
+			t.Fatalf("expected 2 results, got %d", len(results))
+		}
+
+		if results[0].Name != "London" {
+			t.Errorf("expected first result to be London, got %s", results[0].Name)
+		}
+
+		if results[1].Name != "Londonderry" {
+			t.Errorf("expected second result to be Londonderry, got %s", results[1].Name)
+		}
+	})
+}
