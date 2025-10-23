@@ -48,6 +48,9 @@ func (h *MinHeap[T]) Items() []T {
 }
 
 func (h *MinHeap[T]) PushBounded(x T, k int) {
+	if k <= 0 {
+		return
+	}
 	if len(h.data) < k {
 		heap.Push(h, x)
 	} else if h.less(h.data[0], x) {
