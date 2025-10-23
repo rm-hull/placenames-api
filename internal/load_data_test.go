@@ -118,6 +118,21 @@ Paris
 		}
 	})
 
+	t.Run("malformed csv record", func(t *testing.T) {
+		// Test case with a malformed CSV record (unclosed quote)
+		content := `name,relevancy
+"London,1.0
+`
+		path := createTestGzipFile(t, content)
+		_, err := LoadData(path)
+		if err == nil {
+			t.Fatal("expected an error for malformed CSV, got nil")
+		}
+		if !strings.Contains(err.Error(), "failed to read CSV record") {
+			t.Errorf("expected error to contain 'failed to read CSV record', got %v", err)
+		}
+	})
+
 	t.Run("successful load of large file", func(t *testing.T) {
 		// This is more of an integration test and relies on the actual data file.
 		// It's useful for ensuring the LoadData function can handle the real data.

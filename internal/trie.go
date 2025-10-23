@@ -49,9 +49,6 @@ func (t *Trie) Insert(place *Place) {
 func (t *Trie) SortAllNodes() {
 	var dfs func(*TrieNode)
 	dfs = func(n *TrieNode) {
-		if n == nil {
-			return
-		}
 		sort.SliceStable(n.Places, func(i, j int) bool {
 			pi, pj := n.Places[i], n.Places[j]
 			if pi.Relevancy == pj.Relevancy {
