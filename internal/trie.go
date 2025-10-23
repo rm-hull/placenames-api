@@ -105,18 +105,20 @@ func LoadData(filename string) (*Trie, error) {
 	line := 0
 
 	for {
+		line++
 		rec, err := csvReader.Read()
 		if err == io.EOF {
 			break
 		}
 		if err != nil {
-			return nil, fmt.Errorf("failed to read CSV record on line %d: %w", line+1, err)
+			return nil, fmt.Errorf("failed to read CSV record on line %d: %w", line, err)
 		}
-		// csv.Reader counts lines starting from 1; we keep our own counter to track header
-		line++
+
+		// Skip header
 		if line == 1 {
-			continue // skip header
+			continue
 		}
+
 		if len(rec) < 2 {
 			return nil, fmt.Errorf("invalid record on line %d: expected at least 2 fields, got %d", line, len(rec))
 		}

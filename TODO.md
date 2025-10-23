@@ -10,7 +10,7 @@ Reading the code, the implementation is concise and functional. The main areas t
 
 - Handle missing file gracefully at startup: consider non-fatal failure modes (empty-data mode or retry/backoff) instead of immediate `log.Fatalf`.
 - Configurable strictness for CSV parsing: add strict vs permissive modes. In permissive mode, log and skip malformed rows rather than failing startup.
-- CSV line-number accuracy: your `line` counter increments after reading; ensure error messages clearly document which numbering scheme is used (header = line 1).
+- ~~CSV line-number accuracy: your `line` counter increments after reading; ensure error messages clearly document which numbering scheme is used (header = line 1).~~
 - Input normalization: apply Unicode normalization (NFC) and trimming when storing and when querying to avoid mismatches on composed/decomposed characters.
 - ~~Concurrency safety: the `Trie` is not synchronized. If you ever mutate it after startup or build it concurrently, protect it with a RWMutex or avoid post-start writes.~~ **WONT DO: unnecessary**
 
@@ -48,8 +48,8 @@ Reading the code, the implementation is concise and functional. The main areas t
 
 - Unit tests:
   - Tests for `Trie.Insert`, `SortAllNodes`, `FindByPrefix` including unicode, ties in relevancy, case insensitivity, duplicates and edge cases (empty prefix).
-- Integration tests:
-  - Small gzipped CSV fixtures to test `loadData` in strict/permissive modes.
+- ~~Integration tests:~~
+  - ~~Small gzipped CSV fixtures to test `loadData` in strict/permissive modes.~~
 - Benchmarks:
   - Bench `Insert + SortAllNodes` and `FindByPrefix` at realistic sizes (62k and larger). Measure allocations and peak memory.
 - Regression tests:
