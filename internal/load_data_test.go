@@ -1,0 +1,137 @@
+package internal
+
+import (
+	"compress/gzip"
+	"os"
+	"path/filepath"
+	"testing"
+)
+
+// createTestGzipFile creates a temporary gzipped CSV file for testing.
+func createTestGzipFile(t *testing.T, content string) string {
+	t.Helper()
+	dir := t.TempDir()
+	path := filepath.Join(dir, "test.csv.gz")
+
+	file, err := os.Create(path)
+	if err != nil {
+		t.Fatalf("failed to create temp file: %v", err)
+	}
+	defer file.Close()
+
+	gzWriter := gzip.NewWriter(file)
+	defer gzWriter.Close()
+
+	_, err = gzWriter.Write([]byte(content))
+	if err != nil {
+		t.Fatalf("failed to write to gzip writer: %v", err)
+	}
+
+	return path
+}
+
+func TestLoadData(t *testing.T) {
+	t.Run("successful load", func(t *testing.T) {
+		content := `name,relevancy
+London,1.0
+Luton,0.8
+`
+		path := createTestGzipFile(t, content)
+		trie, err := LoadData(path)
+		if err != nil {
+			t.Fatalf("expected no error, got %v", err)
+		}
+
+		results := trie.FindByPrefix("L")
+		if len(results) != 2 {
+			t.Errorf("expected 2 results, got %d", len(results))
+		}
+
+		results = trie.FindByPrefix("Lu")
+		if len(results) != 1 {
+			t.Errorf("expected 1 result, got %d", len(results))
+		}
+		if results[0].Name != "Luton" {
+			t.Errorf("expected Luton, got %s", results[0].Name)
+		}
+	})
+
+	t.Run("file not found", func(t *testing.T) {
+		_, err := LoadData("non-existent-file.csv.gz")
+		if err == nil {
+			t.Fatal("expected an error, got nil")
+		}
+	})
+
+	t.Run("invalid gzip file", func(t *testing.T) {
+		dir := t.TempDir()
+		path := filepath.Join(dir, "test.txt")
+		if err := os.WriteFile(path, []byte("not a gzip file"), 0644); err != nil {
+			t.Fatalf("failed to create temp file: %v", err)
+		}
+
+		_, err := LoadData(path)
+		if err == nil {
+			t.Fatal("expected an error, got nil")
+		}
+	})
+
+	t.Run("invalid csv content", func(t *testing.T) {
+		// Test case with a row that has a non-numeric relevancy
+		content := `name,relevancy
+London,1.0
+Paris,invalid
+`
+		path := createTestGzipFile(t, content)
+		_, err := LoadData(path)
+		if err == nil {
+			t.Fatal("expected an error for invalid relevancy, got nil")
+		}
+	})
+
+	t.Run("csv content with wrong number of columns", func(t *testing.T) {
+		content := `name,relevancy
+London,1.0
+Paris
+`
+		path := createTestGzipFile(t, content)
+		_, err := LoadData(path)
+		if err == nil {
+			t.Fatal("expected an error for wrong number of columns, got nil")
+		}
+	})
+
+	t.Run("successful load of large file", func(t *testing.T) {
+		// This is more of an integration test and relies on the actual data file.
+		// It's useful for ensuring the LoadData function can handle the real data.
+		const dataFile = "../data/placenames_with_relevancy.csv.gz"
+
+		if _, err := os.Stat(dataFile); os.IsNotExist(err) {
+			t.Skipf("data file not found: %s, skipping test", dataFile)
+		}
+
+		trie, err := LoadData(dataFile)
+		if err != nil {
+			t.Fatalf("expected no error, got %v", err)
+		}
+
+		results := trie.FindByPrefix("London")
+		if len(results) == 0 {
+			t.Fatal("expected at least one result for 'London', got 0")
+		}
+
+		// Check if "London" is in the top results. Because of the sorting,
+		// it should be one of the first results.
+		found := false
+		for _, p := range results {
+			if p.Name == "London" {
+				found = true
+				break
+			}
+		}
+
+		if !found {
+			t.Error("expected to find 'London' in the results")
+		}
+	})
+}
