@@ -28,8 +28,8 @@ Reading the code, the implementation is concise and functional. The main areas t
   - Consider a radix/compressed trie to reduce node count and pointer overhead for long common prefixes.
 - Unicode and rune handling:
   - Normalize both stored names and queries. Verify rune iteration is correct for your dataset (surrogate handling, combining marks).
-- CSV robustness:
-  - Use `csvReader.FieldsPerRecord = -1` if records have variable numbers of fields; otherwise validate and fail or skip based on configured strictness.
+- ~~CSV robustness:~~
+  - ~~Use `csvReader.FieldsPerRecord = -1` if records have variable numbers of fields; otherwise validate and fail or skip based on configured strictness.~~
 
 ## API & ergonomics
 

@@ -39,9 +39,21 @@ func (t *Trie) Insert(place *Place) {
 			node.Children[r] = &TrieNode{Children: make(map[rune]*TrieNode)}
 		}
 		node = node.Children[r]
+
+		shouldInsert := true
+		for _, p := range node.Places {
+			if p.Name == place.Name {
+				// Duplicate, do not insert
+				shouldInsert = false
+				break
+			}
+		}
+
 		// Store a pointer to the place at every node along the path
 		// to support efficient ranked prefix search.
-		node.Places = append(node.Places, place)
+		if shouldInsert {
+			node.Places = append(node.Places, place)
+		}
 	}
 }
 
