@@ -71,8 +71,6 @@ func TestTrieBasics(t *testing.T) {
 		trie.Insert(&p)
 	}
 
-	trie.SortAllNodes()
-
 	// Test exact prefix match
 	results := trie.FindByPrefix("Lo")
 	if len(results) != 2 {
@@ -109,8 +107,6 @@ func TestTrieAdvanced(t *testing.T) {
 			trie.Insert(&p)
 		}
 
-		trie.SortAllNodes()
-
 		results := trie.FindByPrefix("İstan")
 		if len(results) != 1 {
 			t.Errorf("expected 1 result for 'İstan', got %d", len(results))
@@ -131,8 +127,6 @@ func TestTrieAdvanced(t *testing.T) {
 		for _, p := range places {
 			trie.Insert(&p)
 		}
-
-		trie.SortAllNodes()
 
 		results := trie.FindByPrefix("Lon")
 		if len(results) != 2 {
@@ -197,8 +191,6 @@ func TestTrieAdvanced(t *testing.T) {
 		for _, p := range places {
 			trie.Insert(&p)
 		}
-
-		trie.SortAllNodes()
 
 		results := trie.FindByPrefix("London")
 		if len(results) != 2 {

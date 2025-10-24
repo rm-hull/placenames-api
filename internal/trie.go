@@ -76,22 +76,15 @@ func (t *Trie) FindByPrefix(prefix string) []*Place {
 		node = next
 	}
 
-	return node.Places.Items()
-}
+	items := node.Places.Items()
+	result := make([]*Place, len(items))
+	copy(result, items)
 
-func (t *Trie) SortAllNodes() {
-	var dfs func(*TrieNode)
-	dfs = func(n *TrieNode) {
-		if n.Places != nil && len(n.Places.data) > 1 {
-			sort.Slice(n.Places.data, func(i, j int) bool {
-				return t.less(n.Places.data[j], n.Places.data[i]) // note: reverse order
-			})
-		}
-		for _, child := range n.Children {
-			dfs(child)
-		}
-	}
-	dfs(t.root)
+	sort.Slice(result, func(i, j int) bool {
+		return t.less(result[j], result[i]) // note: reverse order
+	})
+
+	return result
 }
 
 func LoadData(filename string, topK int) (*Trie, error) {
@@ -146,7 +139,6 @@ func LoadData(filename string, topK int) (*Trie, error) {
 		}
 		trie.Insert(&Place{Name: name, Relevancy: rel})
 	}
-	trie.SortAllNodes()
 	log.Printf("Loaded %d place names", line)
 
 	return trie, nil
