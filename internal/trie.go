@@ -80,7 +80,7 @@ func (t *Trie) FindByPrefix(prefix string) []*Place {
 	result := make([]*Place, len(items))
 	copy(result, items)
 
-	sort.Slice(result, func(i, j int) bool {
+sort.SliceStable(result, func(i, j int) bool {
 		return t.less(result[j], result[i]) // note: reverse order
 	})
 
