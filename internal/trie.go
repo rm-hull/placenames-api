@@ -1,14 +1,8 @@
 package internal
 
 import (
-	"compress/gzip"
-	"encoding/csv"
-	"fmt"
-	"io"
 	"log"
-	"os"
 	"sort"
-	"strconv"
 	"strings"
 )
 
@@ -87,59 +81,17 @@ func (t *Trie) FindByPrefix(prefix string) []*Place {
 	return result
 }
 
-func LoadData(filename string, topK int) (*Trie, error) {
-	log.Printf("Loading data from: %s", filename)
-	file, err := os.Open(filename)
-	if err != nil {
-		return nil, fmt.Errorf("failed to open file: %w", err)
-	}
-	defer func() {
-		if err := file.Close(); err != nil {
-			log.Printf("Error closing file: %v", err)
-		}
-	}()
-
-	gzReader, err := gzip.NewReader(file)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create gzip reader: %w", err)
-	}
-	defer func() {
-		if err := gzReader.Close(); err != nil {
-			log.Printf("Error closing gzip reader: %v", err)
-		}
-	}()
-
-	csvReader := csv.NewReader(gzReader)
-	csvReader.FieldsPerRecord = -1 // Allow variable number of fields
+func PopulateFrom(filename string, topK int) (*Trie, error) {
 	trie := NewTrie(topK)
-	line := 0
+	count, err := LoadCSV(filename, func(location string, score float64) error {
+		trie.Insert(&Place{Name: location, Relevancy: score})
+		return nil
+	})
 
-	for {
-		line++
-		rec, err := csvReader.Read()
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			return nil, fmt.Errorf("failed to read CSV record on line %d: %w", line, err)
-		}
-
-		// Skip header
-		if line == 1 {
-			continue
-		}
-
-		if len(rec) < 2 {
-			return nil, fmt.Errorf("invalid record on line %d: expected at least 2 fields, got %d", line, len(rec))
-		}
-		name := rec[0]
-		rel, err := strconv.ParseFloat(rec[1], 64)
-		if err != nil {
-			return nil, fmt.Errorf("invalid relevancy value on line %d: %w", line, err)
-		}
-		trie.Insert(&Place{Name: name, Relevancy: rel})
+	if err != nil {
+		return nil, err
 	}
-	log.Printf("Loaded %d place names", line)
+	log.Printf("Loaded %d place names into trie structure", count)
 
 	return trie, nil
 }
