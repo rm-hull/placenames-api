@@ -106,7 +106,7 @@ func RegenCSV(filename string, numWorkers int) error {
 	results := make(chan Result, len(locations))
 
 	var wg sync.WaitGroup
-	for i := 0; i < numWorkers; i++ {
+	for i := range numWorkers {
 		wg.Add(1)
 		go worker(i+1, jobs, results, &wg, &client)
 	}
