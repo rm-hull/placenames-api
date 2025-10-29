@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"fmt"
 	"log"
 	"sort"
 	"strings"
@@ -89,7 +90,7 @@ func PopulateFrom(filename string, topK int) (*Trie, error) {
 	})
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to populate trie: %w", err)
 	}
 	log.Printf("Loaded %d place names into trie structure", count)
 
