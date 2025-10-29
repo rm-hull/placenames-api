@@ -16,6 +16,19 @@
         "--debug"
       ],
       "buildFlags": "-tags=jsoniter"
+    },
+    {
+      "name": "Regenerate CSV",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "main.go",
+      "args": [
+        "regen-csv",
+        "--file","./data/placenames_with_relevancy.csv.gz",
+        "--num-workers","6"
+      ],
+      "buildFlags": "-tags=jsoniter"
     }
   ]
 }
