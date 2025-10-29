@@ -42,7 +42,7 @@ London,1.0
 Luton,0.8
 `
 		path := createTestGzipFile(t, content)
-		trie, err := LoadData(path, 100)
+		trie, err := PopulateFrom(path, 100)
 		if err != nil {
 			t.Fatalf("expected no error, got %v", err)
 		}
@@ -62,7 +62,7 @@ Luton,0.8
 	})
 
 	t.Run("file not found", func(t *testing.T) {
-		_, err := LoadData("non-existent-file.csv.gz", 100)
+		_, err := PopulateFrom("non-existent-file.csv.gz", 100)
 		if err == nil {
 			t.Fatal("expected an error, got nil")
 		}
@@ -78,7 +78,7 @@ Luton,0.8
 			t.Fatalf("failed to create temp file: %v", err)
 		}
 
-		_, err := LoadData(path, 100)
+		_, err := PopulateFrom(path, 100)
 		if err == nil {
 			t.Fatal("expected an error, got nil")
 		}
@@ -94,12 +94,12 @@ London,1.0
 Paris,invalid
 `
 		path := createTestGzipFile(t, content)
-		_, err := LoadData(path, 100)
+		_, err := PopulateFrom(path, 100)
 		if err == nil {
-			t.Fatal("expected an error for invalid relevancy, got nil")
+			t.Fatal("expected an error for invalid score, got nil")
 		}
-		if !strings.Contains(err.Error(), "invalid relevancy value") {
-			t.Errorf("expected error to contain 'invalid relevancy value', got %v", err)
+		if !strings.Contains(err.Error(), "invalid score value") {
+			t.Errorf("expected error to contain 'invalid score value', got %v", err)
 		}
 	})
 
@@ -109,7 +109,7 @@ London,1.0
 Paris
 `
 		path := createTestGzipFile(t, content)
-		_, err := LoadData(path, 100)
+		_, err := PopulateFrom(path, 100)
 		if err == nil {
 			t.Fatal("expected an error for wrong number of columns, got nil")
 		}
@@ -124,7 +124,7 @@ Paris
 "London,1.0
 `
 		path := createTestGzipFile(t, content)
-		_, err := LoadData(path, 100)
+		_, err := PopulateFrom(path, 100)
 		if err == nil {
 			t.Fatal("expected an error for malformed CSV, got nil")
 		}
@@ -142,7 +142,7 @@ Paris
 			t.Skipf("data file not found: %s, skipping test", dataFile)
 		}
 
-		trie, err := LoadData(dataFile, 100)
+		trie, err := PopulateFrom(dataFile, 100)
 		if err != nil {
 			t.Fatalf("expected no error, got %v", err)
 		}

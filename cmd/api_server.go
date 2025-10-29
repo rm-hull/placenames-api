@@ -25,7 +25,7 @@ func ApiServer(filePath string, port int, debug bool, topK int) error {
 	godx.EnvironmentVars()
 	godx.UserInfo()
 
-	trie, err := internal.LoadData(filePath, topK)
+	trie, err := internal.PopulateFrom(filePath, topK)
 	if err != nil {
 		return fmt.Errorf("error loading data: %w", err)
 	}
