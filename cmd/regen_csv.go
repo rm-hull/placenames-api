@@ -15,8 +15,8 @@ import (
 
 	_ "embed"
 
-	openai "github.com/openai/openai-go"
-	"github.com/openai/openai-go/option"
+	openai "github.com/openai/openai-go/v3"
+	"github.com/openai/openai-go/v3/option"
 	"github.com/rm-hull/placenames-api/internal"
 )
 
@@ -49,7 +49,10 @@ func getPopularityScore(client *openai.Client, location string) (float64, error)
 			openai.SystemMessage(systemPrompt),
 			openai.UserMessage(location),
 		},
-	})
+	},
+		option.WithJSONSet("session_file", "session_llama.bin"),
+		option.WithJSONSet("session_prompt", systemPrompt),
+	)
 	if err != nil {
 		return 0, fmt.Errorf("failed to call OpenAI chat completion endpoint: %w", err)
 	}
