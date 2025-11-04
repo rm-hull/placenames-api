@@ -58,7 +58,7 @@ require (
 	github.com/pelletier/go-toml/v2 v2.2.4 // indirect
 	github.com/quic-go/qpack v0.5.1 // indirect
 	github.com/quic-go/quic-go v0.55.0 // indirect
-	github.com/rm-hull/godx v0.0.4
+	github.com/rm-hull/godx v0.0.5
 	github.com/spf13/cobra v1.10.1
 	github.com/tavsec/gin-healthcheck v1.7.11
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
