@@ -1,6 +1,6 @@
 module github.com/rm-hull/placenames-api
 
-go 1.25.3
+go 1.26
 
 require github.com/gin-gonic/gin v1.11.0
 
