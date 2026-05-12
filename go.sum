@@ -175,8 +175,8 @@ github.com/rabbitmq/amqp091-go v1.11.0 h1:HxIctVm9Gid/Vtn706necmZ7Wj6pgGI2eqplRb
 github.com/rabbitmq/amqp091-go v1.11.0/go.mod h1:Hy4jKW5kQART1u+JkDTF9YYOQUHXqMuhrgxOEeS7G4o=
 github.com/redis/go-redis/v9 v9.19.0 h1:XPVaaPSnG6RhYf7p+rmSa9zZfeVAnWsH5h3lxthOm/k=
 github.com/redis/go-redis/v9 v9.19.0/go.mod h1:v/M13XI1PVCDcm01VtPFOADfZtHf8YW3baQf57KlIkA=
-github.com/rm-hull/godx v0.2.1 h1:wv5rNEl5BSCkv35GLBdHJ/jrZALKyEXI6E5NCN/8+HI=
-github.com/rm-hull/godx v0.2.1/go.mod h1:bVa3+ZY0TgOvwrlhDb4kngU8L63BlqcwSYu63GCHowQ=
+github.com/rm-hull/godx v0.2.2 h1:i/ipGC+gDVIlL1bUqDQoQD9Leoxs0gB4GOWL/LaLyX4=
+github.com/rm-hull/godx v0.2.2/go.mod h1:bVa3+ZY0TgOvwrlhDb4kngU8L63BlqcwSYu63GCHowQ=
 github.com/russross/blackfriday/v2 v2.1.0/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
 github.com/shirou/gopsutil/v4 v4.26.3 h1:2ESdQt90yU3oXF/CdOlRCJxrP+Am1aBYubTMTfxJ1qc=
 github.com/shirou/gopsutil/v4 v4.26.3/go.mod h1:LZ6ewCSkBqUpvSOf+LsTGnRinC6iaNUNMGBtDkJBaLQ=
