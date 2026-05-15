@@ -109,7 +109,8 @@ jobs:
             type=sha
           labels: |
             maintainer=rm-hull
-            org.opencontainers.image.description=REST API for GPS routes
+            org.opencontainers.image.description=REST API that provides auto-suggestions for UK place names. It is designed for efficient prefix-based searching, leveraging a trie data structure for fast lookups.
+            org.opencontainers.image.source="https://github.com/map-services/placenames-api"
             org.opencontainers.image.licenses=MIT
 
       - name: Build and push Docker image
