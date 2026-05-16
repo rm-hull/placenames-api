@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/rm-hull/placenames-api/cmd"
+	"github.com/map-services/placenames-api/cmd"
 	"github.com/spf13/cobra"
 )
 

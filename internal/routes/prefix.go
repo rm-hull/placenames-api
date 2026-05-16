@@ -7,7 +7,7 @@ import (
 	"unicode"
 
 	"github.com/gin-gonic/gin"
-	"github.com/rm-hull/placenames-api/internal"
+	"github.com/map-services/placenames-api/internal"
 )
 
 type Result struct {
